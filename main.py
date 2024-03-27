@@ -24,6 +24,7 @@ WIKI_URL_FULL = f"{config['WIKI_URL']}{config['WIKI_PATH']}index.php"
 config["FORCE_LOGIN"] = config["FORCE_LOGIN"] and config["FORCE_LOGIN"].lower() in ACCEPTED_VALUES
 config["SPREADSHEET_PATH"] = (Path.cwd() / config["SPREADSHEET_PATH"]).resolve()
 config["SEED_DIR"] = (Path.cwd() / config["SEED_DIR"]).resolve()
+config["ASSETS_DIR"] = (Path.cwd() / config["ASSETS_DIR"]).resolve()
 config["EFFECT_NAME_MAP_FILE"] = (Path.cwd() / config["EFFECT_NAME_MAP_FILE"]).resolve()
 config["ALLOWED_SEED_PARENT_DIRS"] = config["ALLOWED_SEED_PARENT_DIRS"].split(",")
 config["MAPOBJECT_INFOBOX_PARAMS"] = config["MAPOBJECT_INFOBOX_PARAMS"].split(",")
@@ -269,7 +270,9 @@ class WikiTools(Site):
                     time.sleep(API_RATE_LIMITED_WAIT_SECS)
                     self.api_request_counter = 0
 
-    def seed_wiki(self, seed_dir):
+    def seed_wiki(self, assets_dir, seed_dir):
+        print(f"Uploading contents of assets dir: {assets_dir}")
+        self.upload_dir_contents(assets_dir, seeding=True)
         for seed_subdir in [item.name for item in seed_dir.iterdir() if item.is_dir()]:
             if seed_subdir == "assets" or seed_subdir == "files":
                 self.upload_dir_contents((seed_dir / seed_subdir).resolve(), seeding=True)
@@ -287,11 +290,11 @@ class WikiTools(Site):
 def main():
     wt = WikiTools(config["WIKI_URL"], config["USER_AGENT"], config["SCHEME"], config["WIKI_PATH"], config["FORCE_LOGIN"], config["WIKI_USERNAME"], config["WIKI_PASSWORD"], httpauth=HTTP_AUTH)
     if args.command == "seed":
-        wt.seed_wiki(config["SEED_DIR"])
+        wt.seed_wiki(config["ASSETS_DIR"], config["SEED_DIR"])
     elif args.command == "upload-spreadsheet":
         wt.upload_card_data_spreadsheet(config["SPREADSHEET_PATH"])
     elif args.command == "update-wiki":
-        wt.seed_wiki(config["SEED_DIR"])
+        wt.seed_wiki(config["ASSETS_DIR"], config["SEED_DIR"])
         wt.upload_card_data_spreadsheet(config["SPREADSHEET_PATH"])
 
 
