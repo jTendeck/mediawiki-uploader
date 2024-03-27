@@ -142,3 +142,42 @@ If you want to create your own templates, like infoboxes, you must download and 
 | param5 = 5
 }}
 ```
+
+## Release
+
+- Create a new tag:
+
+```sh
+git tag v<tag-name> main
+```
+
+- Push:
+
+> [!WARNING]
+> For some reason, one of the releases failed. Rerunning the job fixed it.
+
+```sh
+git push origin v<tag-name>
+```
+
+
+
+## Commands to Download Release
+
+First, need asset ID of the release. Send a request to:
+
+```sh
+set TAG=v0.1.0
+curl -L "https://api.github.com/repos/jTendeck/mediawiki-uploader/releases/tags/%TAG%"
+```
+45[]
+Find the asset ID for the tag to download. This can be found in `[n].assets[n].id`... or use the assets URL.
+
+Then download using:
+
+```sh
+set ASSET_ID=
+set OUTPUT_FILE=WikiUploader.zip
+
+curl -H "Accept: application/octet-stream" -L https://api.github.com/repos/jTendeck/mediawiki-uploader/releases/assets/%ASSET_ID% -o %OUTPUT_FILE%
+```
