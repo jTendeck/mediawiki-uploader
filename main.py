@@ -19,7 +19,7 @@ config = {
 
 ACCEPTED_VALUES = {"true", "t", "yes", "y", "1"}
 
-config["WIKI_URL"] = f"{config['WIKI_URL']}:{config['PORT']}" if config["PORT"] else config["WIKI_URL"]
+config["WIKI_URL"] = f"{config['WIKI_URL']}:{config['PORT']}" if "PORT" in config and config["PORT"] else config["WIKI_URL"]
 WIKI_URL_FULL = f"{config['WIKI_URL']}{config['WIKI_PATH']}index.php"
 config["FORCE_LOGIN"] = config["FORCE_LOGIN"] and config["FORCE_LOGIN"].lower() in ACCEPTED_VALUES
 config["SPREADSHEET_PATH"] = (Path.cwd() / config["SPREADSHEET_PATH"]).resolve()
